@@ -1,0 +1,12 @@
+@use '@app/styles/variables.scss' as *;
+
+.app {
+  max-width: 375px;
+  width: 100%;
+  background-color: #000;
+  border-radius: 30px;
+}
+
+.body {
+  padding: 0 $padding-default $padding-default;
+}

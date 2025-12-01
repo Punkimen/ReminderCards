@@ -1,9 +1,8 @@
 import { useState, type FC } from 'react';
-import { Card } from './Card';
-import { CardsHandle } from './CardHandle';
-import type { ICard } from '../types/Card.types';
+import { CardsHandle } from '../Cards/ui/CardHandle';
 import { useQuery } from '@tanstack/react-query';
-import { apiHandler } from '../api/base.api';
+import { apiHandler } from '@/api/base.api';
+import type { ICard } from '../Cards/types/index.types';
 
 const USER_ID = '170420530';
 

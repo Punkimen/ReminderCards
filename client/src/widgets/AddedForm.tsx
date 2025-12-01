@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useBot } from '../hooks/useBot';
-import { useCustomMutation } from '../hooks/useCustomMutation';
+import { useBot } from '../shared/hooks/useBot';
+import { useCustomMutation } from '../shared/hooks/useCustomMutation';
 import { apiHandler } from '../api/base.api';
 
 

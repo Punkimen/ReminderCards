@@ -1,0 +1,15 @@
+@use '@app/styles/variables.scss' as *;
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: $padding-default 0;
+}
+
+.btn {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  font-size: 15px;
+}

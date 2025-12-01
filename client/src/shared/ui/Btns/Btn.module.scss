@@ -1,0 +1,43 @@
+.btn {
+  cursor: pointer;
+  transition: all ease-in .3s;
+  font-weight: 500;
+  border-radius: 300px;
+  text-align: center;
+}
+
+.reset {
+  background-color: transparent;
+  color: inherit;
+  font-size: inherit;
+  border: none;
+}
+
+.primary {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  border: none;
+  padding: 0.5em 1em;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+.secondary {
+  background-color: #fff;
+  color: #000000;
+}
+
+.default {
+  background-color: #404040;
+  color: #fff;
+}
+
+.medium {
+  font-size: 10px;
+  padding: 13px;
+}
+
+.large {
+  font-size: 13px;
+  padding: 20px;
+}

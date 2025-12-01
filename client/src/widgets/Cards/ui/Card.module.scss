@@ -1,9 +1,12 @@
+@use '@app/styles/variables.scss' as *;
+
 .card {
   border-radius: 16px;
   height: 600px;
-  width: 300px;
+  width: 100%;
   color: #000;
   perspective: 1000px;
+  position: relative;
 }
 
 .card__inner {
@@ -34,15 +37,29 @@
   align-items: center;
   justify-content: center;
   font-size: 24px;
-}
-
-.front {
-  background-color: #bbb;
-  color: black;
+  background-image: url(@assets/gradient.jpg);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  padding: 0 $padding-default;
 }
 
 .back {
-  background-color: #2980b9;
-  color: white;
   transform: rotateY(180deg);
+}
+
+.cardHandle {
+  position: absolute;
+  bottom: 17px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 $padding-default;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }

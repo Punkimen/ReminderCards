@@ -1,13 +1,12 @@
-import { apiHandler } from '../api/base.api';
-import type { ICard } from '../types/Card.types';
-import { useCustomMutation } from '../hooks/useCustomMutation';
+import { apiHandler } from '../../../api/base.api';
+import { useCustomMutation } from '../../../shared/hooks/useCustomMutation';
+import type { ICard } from '../types/index.types';
+import Unlike from '@assets/unlike.svg?react';
+import Like from '@assets/like.svg?react';
+import s from './Card.module.scss';
+import { Btn } from '@/shared/ui/Btns/Btn';
 
 export const CardsHandle = ({ card }: { card: ICard }) => {
-  
-  const deleteCard = async () => {
-    return apiHandler.delete(`cards/${card.id}`);
-  };
-
   const changePriority = async (increment: 'low' | 'high') => {
     let newPriority: ICard['priority'] = 'MEDIUM';
 
@@ -29,38 +28,31 @@ export const CardsHandle = ({ card }: { card: ICard }) => {
 
   };
 
-  const deleteMutation = useCustomMutation<void, unknown>(() => deleteCard(), 'cards');
   const changePriorityMutation = useCustomMutation<'low' | 'high', unknown>(
     (increment) => changePriority(increment as 'low' | 'high'),
     'cards',
   );
 
   return (
-    <div>
+    <div className={s.cardHandle}>
       {card.priority !== 'LOW' && (
-        <button
+        <Btn
           onClick={() => {
             changePriorityMutation.mutate('low');
           }}
         >
-          Показывать реже
-        </button>
+           <Unlike /> 
+        </Btn> 
       )}
-      <button
-        onClick={() => {
-          deleteMutation.mutate();
-        }}
-      >
-        Удалить карту
-      </button>
+ 
       {card.priority !== 'HIGH' && (
-        <button
+        <Btn
           onClick={() => {
             changePriorityMutation.mutate('high');
           }}
         >
-          Показывать чаще
-        </button>
+          <Like />
+        </Btn>
       )}
     </div>
   );
