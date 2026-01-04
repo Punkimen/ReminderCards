@@ -1,7 +1,7 @@
 import { useState, type FC } from 'react';
 import { CardForm } from './CardForm';
 import { Btn } from '@/shared/ui/Btns/Btn';
-import Pencil from '@/assets/edit.svg';
+import Pencil from '@/assets/edit.svg?react';
 import type { ICard } from '../types/index.types';
 import s from './Card.module.scss';
 import { CardsHandle } from './CardHandle';
@@ -15,7 +15,6 @@ interface ICardProps {
 
 export const Card: FC<ICardProps> = (props) => {
   const [flipped, setFlipped] = useState(false);
-
   const onCardClick = () => {
     if (props.backContent) {
       setFlipped((prev) => !prev);
@@ -25,11 +24,7 @@ export const Card: FC<ICardProps> = (props) => {
   return (
     <div className={s.card} onClick={onCardClick}>
       {props.isCanEdit ? (
-        <Btn
-          onClick={() => {
-            console.log('work');
-          }}
-        >
+        <Btn href={`/update/${props.card?.id}`} className={s.edit}>
           <Pencil />
         </Btn>
       ) : null}
@@ -49,7 +44,8 @@ export const Card: FC<ICardProps> = (props) => {
   );
 };
 
-interface ICardViewProps extends ICardProps {
+interface ICardViewProps
+  extends Omit<ICardProps, 'frontContent' | 'backContent'> {
   translate: string;
   value: string;
 }
@@ -58,6 +54,7 @@ export const CardView = (props: ICardViewProps) => {
   return (
     <Card
       {...props}
+      isCanEdit
       frontContent={<div className={s.value}>{props.value}</div>}
       backContent={<div className={s.translate}>{props.translate}</div>}
     />

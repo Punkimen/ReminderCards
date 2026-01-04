@@ -3,23 +3,27 @@ import { useBot } from '../shared/hooks/useBot';
 import { useCustomMutation } from '../shared/hooks/useCustomMutation';
 import { apiHandler } from '../api/base.api';
 
-
-
-const USER_ID = 170420530;
-
-
 export const AddedForm = () => {
   const [value, setValue] = useState('');
   const [translate, setTranslate] = useState('');
 
   const tg = useBot();
 
-  const addCard = async ({value, translate}: {value: string, translate: string}) => {
+  const addCard = async ({
+    value,
+    translate,
+  }: {
+    value: string;
+    translate: string;
+  }) => {
     return apiHandler.post('cards', { userId: USER_ID, value, translate });
   };
 
-  const addCardMutation = useCustomMutation<{value: string, translate: string}, unknown>(
-    (param) => addCard({value: param.value, translate: param.translate}),
+  const addCardMutation = useCustomMutation<
+    { value: string; translate: string },
+    unknown
+  >(
+    (param) => addCard({ value: param.value, translate: param.translate }),
     'cards',
   );
 
@@ -51,7 +55,7 @@ export const AddedForm = () => {
       <button
         onClick={() => {
           resetForm();
-          addCardMutation.mutate({value, translate})
+          addCardMutation.mutate({ value, translate });
         }}
       >
         Add Card

@@ -2,6 +2,9 @@ import { Btn } from '@/shared/ui/Btns/Btn';
 import { useMemo } from 'react';
 import Delete from '@assets/delete.svg?react';
 import s from './CardsHandlers.module.scss';
+import { apiHandler } from '@/api/base.api';
+import { useCustomMutation } from '@/shared/hooks/useCustomMutation';
+import { useGameStore } from '@/app/store/useGamseStore';
 
 type ActionItem = {
   label: string;
@@ -10,12 +13,24 @@ type ActionItem = {
 };
 
 export const CardsHandlers = () => {
+  const { getCurrentCard, currentIndexCard, setCurrentIndexCard } =
+    useGameStore();
+
+  const deleteCard = (cardId: string | undefined) => {
+    return apiHandler.delete(`cards/${cardId}`).then(() => {
+      setCurrentIndexCard(currentIndexCard > 0 ? currentIndexCard - 1 : 0);
+    });
+  };
+
+  const deleteCardMutation = useCustomMutation(deleteCard, 'cards');
+
   const items: ActionItem[] = useMemo(() => {
     return [
       {
         label: 'Удалить',
         onClick: () => {
           console.log('Delete action');
+          deleteCardMutation.mutate(getCurrentCard?.()?.id);
         },
         icon: <Delete width={16} height={16} />,
       },

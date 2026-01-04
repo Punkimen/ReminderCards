@@ -3,8 +3,8 @@ import { useCustomMutation } from '../../../shared/hooks/useCustomMutation';
 import type { ICard } from '../types/index.types';
 import Unlike from '@assets/unlike.svg?react';
 import Like from '@assets/like.svg?react';
-import s from './Card.module.scss';
 import { Btn } from '@/shared/ui/Btns/Btn';
+import s from './Card.module.scss';
 
 export const CardsHandle = ({ card }: { card: ICard }) => {
   const changePriority = async (increment: 'low' | 'high') => {
@@ -25,7 +25,6 @@ export const CardsHandle = ({ card }: { card: ICard }) => {
     return apiHandler.patch(`cards/${card.id}`, {
       priority: newPriority,
     });
-
   };
 
   const changePriorityMutation = useCustomMutation<'low' | 'high', unknown>(
@@ -37,17 +36,21 @@ export const CardsHandle = ({ card }: { card: ICard }) => {
     <div className={s.cardHandle}>
       {card.priority !== 'LOW' && (
         <Btn
-          onClick={() => {
+          variant="secondary"
+          onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+            e.stopPropagation();
             changePriorityMutation.mutate('low');
           }}
         >
-           <Unlike /> 
-        </Btn> 
+          <Unlike />
+        </Btn>
       )}
- 
+
       {card.priority !== 'HIGH' && (
         <Btn
-          onClick={() => {
+          variant="secondary"
+          onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+            e.stopPropagation();
             changePriorityMutation.mutate('high');
           }}
         >

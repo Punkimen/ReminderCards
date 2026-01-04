@@ -15,23 +15,19 @@ interface BaseButtonProps {
   size?: BtnSize;
 }
 
-// Props for the button element
 interface ButtonProps
   extends BaseButtonProps,
     Omit<ComponentProps<'button'>, keyof BaseButtonProps> {
   href?: never;
 }
 
-// Props for the Link component
 interface LinkProps
   extends BaseButtonProps,
     Omit<RouterLinkProps, keyof BaseButtonProps | 'to'> {
-  href: string;
+  href?: string;
 }
 
 type BtnProps = ButtonProps | LinkProps;
-
-const isLink = (props: BtnProps): props is LinkProps => 'href' in props;
 
 export const Btn = forwardRef<HTMLButtonElement | HTMLAnchorElement, BtnProps>(
   (
@@ -49,7 +45,7 @@ export const Btn = forwardRef<HTMLButtonElement | HTMLAnchorElement, BtnProps>(
       ? cn(className, s.btn, s.reset)
       : cn(className, s.btn, s[variant], s[size]);
 
-    if (isLink(props)) {
+    if (props.href) {
       return (
         <Link
           {...props}

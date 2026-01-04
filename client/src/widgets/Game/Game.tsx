@@ -1,53 +1,27 @@
-import { useState, type FC } from 'react';
-import { CardsHandle } from '../Cards/ui/CardHandle';
+import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { apiHandler } from '@/api/base.api';
 import type { ICard } from '../Cards/types/index.types';
+import { useGameStore } from '@/app/store/useGamseStore';
+import { CardView } from '../Cards/ui/Card';
 
 const USER_ID = '170420530';
 
-interface IGameProps {
-  start: boolean;
-  onChangeStart: (isStart: boolean) => void;
-}
-
-export const Game: FC<IGameProps> = ({ onChangeStart, start }) => {
+export const Game = () => {
   const query = useQuery<ICard[]>({
     queryKey: ['cards'],
     queryFn: async () => {
       const response = await apiHandler.get(`cards?userId=${USER_ID}`);
       return await response.json();
     },
-  }); 
-  const [currentIndexCard, setCurrentIndexCard] = useState<number | null>(null);
+  });
+  const { cards, setCards, currentIndexCard } = useGameStore();
 
-  const onStartClick = async () => {
-    if (start || !query.data || query.data.length === 0) {
-      return;
-    }
+  useEffect(() => {
+    if (!query.data) return;
 
-    setCurrentIndexCard(0);
-    onChangeStart(true);
-  };
-
-  const cards = query.data;
-
-  console.log({ cards });
-
-  const onNextClick = () => {
-    if (currentIndexCard === null || !cards) return;
-    if (currentIndexCard >= Object.keys(cards).length - 1) {
-      setCurrentIndexCard(0);
-      return;
-    }
-
-    setCurrentIndexCard((prev) => (prev !== null ? prev + 1 : 0));
-  };
-
-  const onEndClick = () => {
-    onChangeStart(false);
-    setCurrentIndexCard(null);
-  };
+    setCards(query.data);
+  }, [query.data]);
 
   const currentCard =
     currentIndexCard !== null && cards?.length ? cards[currentIndexCard] : null;
@@ -55,13 +29,12 @@ export const Game: FC<IGameProps> = ({ onChangeStart, start }) => {
   return (
     <div>
       {currentCard && (
-        <Card value={currentCard.value} translate={currentCard.translate} />
+        <CardView
+          value={currentCard.value}
+          translate={currentCard.translate}
+          card={currentCard}
+        />
       )}
-      <button onClick={start ? onNextClick : onStartClick}>
-        {start ? 'Следующая карта' : 'Начать игру'}
-      </button>
-      {currentCard && <CardsHandle card={currentCard} />}
-      <button onClick={onEndClick}>Закончить</button>
     </div>
   );
 };

@@ -40,6 +40,7 @@ export class CardsController {
 
   @Delete(':id')
   async deleteCard(@Param('id') id: string) {
+    console.log('deleting card with id:', id);
     if (!id) return;
     console.log('deleted');
     await this.cardsService.deleteCard(id);
