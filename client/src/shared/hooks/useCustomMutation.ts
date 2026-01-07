@@ -3,6 +3,8 @@ import { useMutation, useQueryClient, type MutationFunction } from "@tanstack/re
 export const useCustomMutation = <TVariables = unknown, TData = unknown>(
   mutationFn: MutationFunction<TData, TVariables>,
   queryKey: string,
+  onSuccess?: () => void,
+  onError?: (error: unknown) => void,
 ) => {
   const queryClient = useQueryClient();
 
@@ -10,7 +12,11 @@ export const useCustomMutation = <TVariables = unknown, TData = unknown>(
     mutationFn,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [queryKey] });
+      onSuccess?.();
     },
+    onError: (error) => {
+      onError?.(error);
+    }
   });
 
   return mutation;

@@ -1,5 +1,5 @@
-import { forwardRef } from 'react';
-import type { ComponentProps } from 'react';
+import React, { forwardRef } from 'react';
+import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 import type { LinkProps as RouterLinkProps } from 'react-router';
 import cn from 'classnames';
@@ -8,30 +8,31 @@ import s from './Btn.module.scss';
 type BtnVariant = 'primary' | 'secondary' | 'default';
 type BtnSize = 'small' | 'medium' | 'large';
 
-interface BaseButtonProps {
+interface BaseProps {
   className?: string;
   isReset?: boolean;
   variant?: BtnVariant;
   size?: BtnSize;
+  children?: ReactNode;
 }
 
-interface ButtonProps
-  extends BaseButtonProps,
-    Omit<ComponentProps<'button'>, keyof BaseButtonProps> {
-  href?: never;
-}
+type ButtonBtnProps = BaseProps &
+  Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, keyof BaseProps> & {
+    as?: 'button';
+  };
 
-interface LinkProps
-  extends BaseButtonProps,
-    Omit<RouterLinkProps, keyof BaseButtonProps | 'to'> {
-  href?: string;
-}
+type LinkBtnProps = BaseProps &
+  Omit<RouterLinkProps, keyof BaseProps> & {
+    as: 'Link';
+  };
 
-type BtnProps = ButtonProps | LinkProps;
-
-export const Btn = forwardRef<HTMLButtonElement | HTMLAnchorElement, BtnProps>(
+const BtnComponent = forwardRef<
+  HTMLButtonElement | HTMLAnchorElement,
+  ButtonBtnProps | LinkBtnProps
+>(
   (
     {
+      as,
       children,
       className,
       isReset,
@@ -45,11 +46,10 @@ export const Btn = forwardRef<HTMLButtonElement | HTMLAnchorElement, BtnProps>(
       ? cn(className, s.btn, s.reset)
       : cn(className, s.btn, s[variant], s[size]);
 
-    if (props.href) {
+    if (as === 'Link') {
       return (
         <Link
-          {...props}
-          to={props.href}
+          {...(props as RouterLinkProps)}
           ref={ref as React.Ref<HTMLAnchorElement>}
           className={complexClassName}
         >
@@ -60,7 +60,7 @@ export const Btn = forwardRef<HTMLButtonElement | HTMLAnchorElement, BtnProps>(
 
     return (
       <button
-        {...(props as ButtonProps)}
+        {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)}
         ref={ref as React.Ref<HTMLButtonElement>}
         className={complexClassName}
       >
@@ -70,4 +70,6 @@ export const Btn = forwardRef<HTMLButtonElement | HTMLAnchorElement, BtnProps>(
   },
 );
 
-Btn.displayName = 'Btn';
+BtnComponent.displayName = 'Btn';
+
+export { BtnComponent as Btn };

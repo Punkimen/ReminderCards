@@ -17,7 +17,12 @@ export const Header: FC<IProps> = ({ user }) => {
   return (
     <header className={s.header}>
       <User user={user} />
-      <Btn className={s.btn} href={inMainPage ? '/create' : '/'} size="medium">
+      <Btn
+        as="Link"
+        className={s.btn}
+        to={inMainPage ? '/create' : '/'}
+        size="medium"
+      >
         {inMainPage ? '+ Создать' : 'Назад'}
       </Btn>
     </header>

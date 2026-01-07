@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { apiHandler } from '@/api/base.api';
 import type { ICard } from '../Cards/types/index.types';
 import { useGameStore } from '@/app/store/useGamseStore';
-import { CardView } from '../Cards/ui/Card';
+import { Card, CardLoading, CardView } from '../Cards/ui/Card';
 
 const USER_ID = '170420530';
 
@@ -26,14 +26,22 @@ export const Game = () => {
   const currentCard =
     currentIndexCard !== null && cards?.length ? cards[currentIndexCard] : null;
 
+  console.log('Game render', { currentCard, cards, currentIndexCard });
+
+  if (query.isLoading) {
+    return <CardLoading />;
+  }
+
   return (
     <div>
-      {currentCard && (
+      {currentCard ? (
         <CardView
           value={currentCard.value}
           translate={currentCard.translate}
           card={currentCard}
         />
+      ) : (
+        <Card frontContent={<div>У вас нет созданных карточек</div>} />
       )}
     </div>
   );

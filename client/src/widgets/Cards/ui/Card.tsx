@@ -5,6 +5,7 @@ import Pencil from '@/assets/edit.svg?react';
 import type { ICard } from '../types/index.types';
 import s from './Card.module.scss';
 import { CardsHandle } from './CardHandle';
+import { Loader } from '@/shared/ui/Loader/Loader';
 
 interface ICardProps {
   frontContent: React.ReactNode;
@@ -23,18 +24,27 @@ export const Card: FC<ICardProps> = (props) => {
 
   return (
     <div className={s.card} onClick={onCardClick}>
-      {props.isCanEdit ? (
-        <Btn href={`/update/${props.card?.id}`} className={s.edit}>
-          <Pencil />
-        </Btn>
-      ) : null}
       <div className={`${s.card__inner} ${flipped && s.flipped}`}>
         <div className={s.front}>
+          {props.isCanEdit ? (
+            <Btn as="Link" to={`/update/${props.card?.id}`} className={s.edit}>
+              <Pencil />
+            </Btn>
+          ) : null}
           {props.frontContent}{' '}
           {props.card ? <CardsHandle card={props.card} /> : null}
         </div>
         {props.backContent ? (
           <div className={s.back}>
+            {props.isCanEdit ? (
+              <Btn
+                as="Link"
+                to={`/update/${props.card?.id}`}
+                className={s.edit}
+              >
+                <Pencil />
+              </Btn>
+            ) : null}
             {props.backContent}{' '}
             {props.card ? <CardsHandle card={props.card} /> : null}
           </div>
@@ -67,4 +77,8 @@ export const CardCreate = () => {
 
 export const CardEdit = () => {
   return <Card frontContent={<CardForm />} />;
+};
+
+export const CardLoading = () => {
+  return <Card frontContent={<Loader />} />;
 };

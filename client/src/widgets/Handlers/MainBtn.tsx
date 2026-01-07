@@ -1,11 +1,11 @@
 import { Btn } from '@/shared/ui/Btns/Btn';
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { useGameStore } from '@/app/store/useGamseStore';
 import { apiHandler } from '@/api/base.api';
 import { useCustomMutation } from '@/shared/hooks/useCustomMutation';
 import { useCardStore } from '@/app/store/useCardStore';
-import s from './MainBtn.module.scss';
 import type { ICard } from '../Cards/types/index.types';
+import s from './MainBtn.module.scss';
 
 const USER_ID = 170420530;
 type TCreateCard = Omit<ICard, 'id'> & { userId: number };
@@ -15,7 +15,8 @@ export const MainBtn = () => {
     location.pathname === '/create' || location.pathname === '/update';
 
   const { setCurrentIndexCard, currentIndexCard, cards } = useGameStore();
-  const { value, translate } = useCardStore();
+  const { value, translate, clearState } = useCardStore();
+  const navigator = useNavigate();
 
   const onNextClick = () => {
     if (currentIndexCard === null || !cards) return;
@@ -41,12 +42,24 @@ export const MainBtn = () => {
         priority: 'MEDIUM',
       }),
     'cards',
+    () => {
+      clearState();
+      navigator('/');
+    },
   );
+
+  if (cards.length === 0 && !isReadyButton) {
+    return (
+      <Btn as="Link" to={'/create'} className={s.btn}>
+        Создать
+      </Btn>
+    );
+  }
 
   return (
     <Btn
       className={s.btn}
-      type={isReadyButton ? 'primary' : 'default'}
+      variant={isReadyButton ? 'primary' : 'default'}
       onClick={
         isReadyButton
           ? () => {

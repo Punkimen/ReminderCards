@@ -3,7 +3,7 @@ import { useBot } from '../shared/hooks/useBot';
 import { Header } from '../widgets/Header/Header';
 import { CardCreate, CardEdit } from '@/widgets/Cards/ui/Card';
 import { MainBtn } from '@/widgets/Handlers/MainBtn';
-import { CardsHandlers } from '@/features/CardsHandlers/CardsHandlers';
+import { CardsHandlers } from '@/widgets/Handlers/CardsHandlers/CardsHandlers';
 import { Game } from '@/widgets/Game/Game';
 import s from './Enter.module.scss';
 
