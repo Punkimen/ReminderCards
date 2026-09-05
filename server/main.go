@@ -32,27 +32,6 @@ const (
 	dbname   = "remindersd"
 )
 
-// func connectToDb() {
-// 	psqlconn := fmt.Sprintf(
-// 		"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-// 		host,
-// 		port,
-// 		user,
-// 		password,
-// 		dbname,
-// 	)
-//
-// 	db, err := sql.Open("postgres", psqlconn)
-// 	CheckError(err)
-//
-// 	defer db.Close()
-//
-// 	err = db.Ping()
-// 	CheckError(err)
-//
-// 	fmt.Println("connected")
-// }
-
 func connectToDB() (*sql.DB, error) {
 	databaseURL := os.Getenv("DATABASE_URL")
 	if databaseURL == "" {
