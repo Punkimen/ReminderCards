@@ -11,9 +11,10 @@ import (
 type Card struct {
 	ID          int64     `json:"id"`
 	CreatedAt   time.Time `json:"createdAt"`
-	Question    string    `json:"question"`
-	Answer      string    `json:"answer"`
-	Description string    `json:"description"`
+	UserID      int64
+	Question    string `json:"question"`
+	Answer      string `json:"answer"`
+	Description string `json:"description"`
 }
 
 type CardRepository struct {
@@ -88,4 +89,16 @@ func (r *CardRepository) GetAllCards(ctx context.Context) ([]Card, error) {
 	}
 
 	return cards, nil
+}
+
+// RemoveCard Удаляет карточку
+func (r *CardRepository) RemoveCard(ctx context.Context, id int64, userID int64) error {
+	const query = `DELETE FROM cards WHERE id = $1 AND user_id = $2;`
+
+	_, err := r.db.ExecContext(ctx, query, id, userID)
+	if err != nil {
+		return fmt.Errorf("RemoveCard: %w", err)
+	}
+
+	return nil
 }
