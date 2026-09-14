@@ -135,3 +135,36 @@ func (r *DeckRepository) GetDeckWithCardsById(
 
 	return result, nil
 }
+
+// UpdateDeck редактировать имя\описание колоды
+type UpdateDeckData struct {
+	Title       *string
+	Description *string
+}
+
+func (r *DeckRepository) UpdateDeck(
+	ctx context.Context,
+	id int64,
+	body UpdateDeckData,
+) (Deck, error) {
+	const query = `
+		UPDATE decks
+		SET 
+			title = COALESCE($1, title),
+			description = COALESCE($2, description)
+		WHERE id = $3
+		RETURNING id, created_at, title, description
+	`
+	var deck Deck
+
+	err := r.db.QueryRowContext(ctx, query, body.Title, body.Description, id).Scan(
+		&deck.CreatedAt,
+		&deck.ID,
+		&deck.Title,
+		&deck.Description,
+	)
+	if err != nil {
+		return Deck{}, fmt.Errorf("update deck: %w", err)
+	}
+	return deck, nil
+}

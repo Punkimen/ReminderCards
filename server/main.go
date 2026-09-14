@@ -9,6 +9,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 
 	"remindercards/model"
@@ -33,6 +34,7 @@ const (
 )
 
 func connectToDB() (*sql.DB, error) {
+	godotenv.Load()
 	databaseURL := os.Getenv("DATABASE_URL")
 	if databaseURL == "" {
 		return nil, fmt.Errorf("DATABASE_URL is not set")

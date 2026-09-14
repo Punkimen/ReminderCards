@@ -1,9 +1,12 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
+	"strconv"
 
 	"remindercards/model"
 )
@@ -39,4 +42,21 @@ func (h *Handler) GetAllCards(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetDeckById(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
+	if err != nil {
+		log.Printf("get id from url: %v", err)
+	}
+
+	result, err := h.decks.GetDeckWithCardsById(r.Context(), id)
+	if errors.Is(err, sql.ErrNoRows) {
+		http.Error(w, "Deck is not found", http.StatusNotFound)
+	}
+	if err != nil {
+		log.Printf("get deck by id: %v", err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(result); err != nil {
+		log.Printf("encode deck by id: %v", err)
+	}
 }
