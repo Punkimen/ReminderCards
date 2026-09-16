@@ -52,6 +52,41 @@ func (r *DeckRepository) CreateDeck(
 	return deck, nil
 }
 
+// GetAllDecks получить все колоды
+func (r *DeckRepository) GetAllDecks(ctx context.Context) ([]Deck, error) {
+	const query = `
+		SELECT id, created_at, title, description
+		FROM decks
+		ORDER BY created_at DESC, id DESC
+	`
+	decks := make([]Deck, 0)
+	rows, err := r.db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("get all decks: %w", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var deck Deck
+		if err := rows.Scan(
+			&deck.ID,
+			&deck.CreatedAt,
+			&deck.Title,
+			&deck.Description,
+		); err != nil {
+			return nil, fmt.Errorf("scan deck: %w", err)
+		}
+
+		decks = append(decks, deck)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate cards: %w", err)
+	}
+
+	return decks, nil
+}
+
 // AddCardToDeck добавляет существующую карточку в существующую колоду.
 func (r *DeckRepository) AddCardToDeck(
 	ctx context.Context,
@@ -167,4 +202,14 @@ func (r *DeckRepository) UpdateDeck(
 		return Deck{}, fmt.Errorf("update deck: %w", err)
 	}
 	return deck, nil
+}
+
+// DeleteDeck Удалить колоду
+func (r *DeckRepository) DeleteDeck(ctx context.Context, id int64, userID int64) error {
+	const query = `DELETE FROM decks WHERE id = $1 AND user_id = $2`
+	_, err := r.db.ExecContext(ctx, query, id, userID)
+	if err != nil {
+		return fmt.Errorf("RemoveDeck: %w", &err)
+	}
+	return nil
 }

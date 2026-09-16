@@ -26,6 +26,7 @@ func NewHandler(
 	}
 }
 
+// GetAllCards получить все карточки
 func (h *Handler) GetAllCards(w http.ResponseWriter, r *http.Request) {
 	cards, err := h.cards.GetAllCards(r.Context())
 	if err != nil {
@@ -41,6 +42,9 @@ func (h *Handler) GetAllCards(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h *Handler) GetAllDecks(w http.ResponseWriter, r *http.Request) {}
+
+// GetDeckById получить колоду, со всем карточками внутри
 func (h *Handler) GetDeckById(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
 	if err != nil {
