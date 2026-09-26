@@ -180,6 +180,7 @@ type UpdateDeckData struct {
 func (r *DeckRepository) UpdateDeck(
 	ctx context.Context,
 	id int64,
+	userID int64,
 	body UpdateDeckData,
 ) (Deck, error) {
 	const query = `
@@ -187,12 +188,12 @@ func (r *DeckRepository) UpdateDeck(
 		SET 
 			title = COALESCE($1, title),
 			description = COALESCE($2, description)
-		WHERE id = $3
+		WHERE id = $3 AND user_id = $4
 		RETURNING id, created_at, title, description
 	`
 	var deck Deck
 
-	err := r.db.QueryRowContext(ctx, query, body.Title, body.Description, id).Scan(
+	err := r.db.QueryRowContext(ctx, query, body.Title, body.Description, id, userID).Scan(
 		&deck.CreatedAt,
 		&deck.ID,
 		&deck.Title,

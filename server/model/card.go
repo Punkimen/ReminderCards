@@ -91,6 +91,39 @@ func (r *CardRepository) GetAllCards(ctx context.Context) ([]Card, error) {
 	return cards, nil
 }
 
+// UpdateCard Изменить карточку
+type UpdateCardBody struct {
+	Answer      *string
+	Description *string
+	Question    *string
+}
+
+func (r *CardRepository) UpdateCard(ctx context.Context, id int64, userID int64, body UpdateCardBody) (Card, error) {
+	const query = `
+		UPDATE cards
+		SET
+			answer = COALESCE($1, answer),
+			question = COALESCE($2, question),
+			description = COALESCE($3, description)
+		WHERE id = $4 AND user_id = $5
+		RETURNING id, created_at, answer, question, description
+	`
+
+	var card Card
+
+	err := r.db.QueryRowContext(ctx, query, body.Answer, body.Question, body.Description, id, userID).Scan(
+		&card.ID,
+		&card.Answer,
+		&card.Question,
+		&card.Description,
+		&card.UserID,
+	)
+	if err != nil {
+		return Card{}, fmt.Errorf("Error to update card: %w", err)
+	}
+	return card, nil
+}
+
 // RemoveCard Удаляет карточку
 func (r *CardRepository) RemoveCard(ctx context.Context, id int64, userID int64) error {
 	const query = `DELETE FROM cards WHERE id = $1 AND user_id = $2;`

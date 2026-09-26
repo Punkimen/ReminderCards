@@ -42,7 +42,67 @@ func (h *Handler) GetAllCards(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *Handler) GetAllDecks(w http.ResponseWriter, r *http.Request) {}
+// CreateCard создает новую карту
+func (h *Handler) CreateCard(w http.ResponseWriter, r *http.Request) {
+	var body struct {
+		Question    string
+		Answer      string
+		Description string
+	}
+	err := json.NewDecoder(r.Body).Decode(&body)
+	if err != nil {
+		http.Error(w, "JSON in inccorect", http.StatusBadRequest)
+		return
+	}
+
+	if body.Answer == "" || body.Question == "" {
+		http.Error(w, "answer and question is required", http.StatusBadRequest)
+		return
+	}
+
+	card, err := h.cards.CreateCard(r.Context(), model.Card{Answer: body.Answer, Question: body.Question, Description: body.Description})
+	if err != nil {
+		http.Error(w, "card is not created", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+
+	if err := json.NewEncoder(w).Encode(card); err != nil {
+		log.Printf("encode card: %v", err)
+	}
+}
+
+// UpdateCard обновить карточку
+func (h *Handler) UpdateCard(w http.ResponseWriter, r *http.Request) {
+	var body struct {
+		Question    string
+		Answer      string
+		Description string
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&body)
+	if err != nil {
+		http.Error(w, "JSON is inccorect", http.StatusBadRequest)
+	}
+
+	newCard, err := h.cards.UpdateCard(r.Context())
+}
+
+// GetAllDecks получить все колоды
+func (h *Handler) GetAllDecks(w http.ResponseWriter, r *http.Request) {
+	decks, err := h.decks.GetAllDecks(r.Context())
+	if err != nil {
+		log.Printf("Failed to get decks: %v", err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+
+	if err := json.NewEncoder(w).Encode(decks); err != nil {
+		log.Printf("encode decks: %v", err)
+	}
+}
 
 // GetDeckById получить колоду, со всем карточками внутри
 func (h *Handler) GetDeckById(w http.ResponseWriter, r *http.Request) {
