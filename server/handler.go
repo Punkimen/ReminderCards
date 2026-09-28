@@ -76,18 +76,46 @@ func (h *Handler) CreateCard(w http.ResponseWriter, r *http.Request) {
 
 // UpdateCard обновить карточку
 func (h *Handler) UpdateCard(w http.ResponseWriter, r *http.Request) {
-	var body struct {
-		Question    string
-		Answer      string
-		Description string
-	}
-
+	var body model.UpdateCardBody
 	err := json.NewDecoder(r.Body).Decode(&body)
 	if err != nil {
 		http.Error(w, "JSON is inccorect", http.StatusBadRequest)
 	}
 
-	newCard, err := h.cards.UpdateCard(r.Context())
+	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
+	if err != nil {
+		http.Error(w, "Id is not defined", http.StatusBadRequest)
+	}
+	userId, ok := r.Context().Value("userId").(int64)
+	if !ok {
+		http.Error(w, "UserId not defined", http.StatusBadRequest)
+	}
+
+	newCard, err := h.cards.UpdateCard(r.Context(), id, userId, body)
+	if err != nil {
+		http.Error(w, "Error for card update", http.StatusInternalServerError)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+
+	if err := json.NewEncoder(w).Encode(newCard); err != nil {
+		http.Error(w, "Error for encode new card", http.StatusInternalServerError)
+	}
+}
+
+// RemoveCard удалить карточку
+func (h *Handler) RemoveCard(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
+	if err != nil {
+		http.Error(w, "Id is not defined", http.StatusBadRequest)
+	}
+	userId, ok := r.Context().Value("userId").(int64)
+	if !ok {
+		http.Error(w, "UserId not defined", http.StatusBadRequest)
+	}
+	if err := h.cards.RemoveCard(r.Context(), id, userId); err != nil {
+		http.Error(w, "RemoveCard not removed", http.StatusInternalServerError)
+	}
 }
 
 // GetAllDecks получить все колоды
